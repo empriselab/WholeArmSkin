@@ -38,7 +38,7 @@
 #define MEASURMENT 5 // need one unused port
 
 //taxel num+1, count from 1
-#define NUM_TAXELS 9
+#define NUM_TAXELS 37
 
 int capdac = 5;
 
@@ -102,39 +102,54 @@ void loop() {
 
   float measurement = 0;
 
-  /* MULTIPLEXER 1 */
+  /* MULTIPLEXER 3 */
+  tcaselect(0, TCAADDR3);  //scl0 sda0
+  c[19] = gettaxelreading( ONEB );
+  c[20] = gettaxelreading( TWOA );
+
+  tcaselect(1, TCAADDR3); //scl1 sda1
+
+  c[33] = gettaxelreading( TWOB );
+  c[34] = gettaxelreading( TWOA );
+  c[35] = gettaxelreading( ONEB );
+  c[36] = gettaxelreading( ONEA );
+
+  tcaselect(2, TCAADDR3); //scl2 sda2
+
+  c[25] = 0; // gettaxelreading( TWOB );
+  c[26] = gettaxelreading( TWOA );
+  c[27] = gettaxelreading( ONEB);
+  c[28] = gettaxelreading( ONEA );
+
+  tcaselect(4, TCAADDR3); 
+  c[18] = gettaxelreading( TWOA );
   
-  tcaselect(0, TCAADDR1);  //scl0 sda0
-  c[0] = 0; //gettaxelreading( ONEB );
-  c[1] = gettaxelreading( TWOB );
+  tcaselect(6, TCAADDR3); //scl3 sda3
 
-  tcaselect(3, TCAADDR1); //scl3 sda3
-  c[2] = gettaxelreading( TWOB );
-  c[3] = gettaxelreading( ONEB );
-  
-  tcaselect(1, TCAADDR1); //scl1 sda1
-  c[4] = gettaxelreading( ONEB );
-  c[5] = gettaxelreading( ONEA );
+  c[29] = gettaxelreading( TWOB );
+  c[30] = gettaxelreading( TWOA );
+  c[31] = gettaxelreading( ONEB);
+  c[32] = 0; //gettaxelreading( ONEA );
 
-  tcaselect(4, TCAADDR1); //scl4 sda4
-  c[6] = gettaxelreading( TWOB );
-  c[7] = 0; //gettaxelreading( ONEB );
+  tcaselect(7, TCAADDR3); //scl1 sda1
+  c[21] = gettaxelreading( TWOA );
+  c[22] = gettaxelreading( ONEA );
+  c[23] = gettaxelreading( TWOB );
+  c[24] = gettaxelreading( ONEB );
 
-  tcaselect(2, TCAADDR1); //scl2 sda2
-  c[8] = gettaxelreading( TWOA );
 
-  tcaselect(MEASURMENT, TCAADDR1);
+  tcaselect(MEASURMENT, TCAADDR3);
   
   uint8_t counter;
-  for(counter = 0; counter<=7; counter++)
+  for(counter = 18; counter<=35; counter++)
   {
     Serial.print(c[counter]);
     Serial.print(' ');
   }
 
-  Serial.println(c[8]);
+  Serial.println(c[36]);
 
-
+  
   msg.cdc = c;
   msg.cdc_length = NUM_TAXELS;
   msg.header.stamp = nh.now();

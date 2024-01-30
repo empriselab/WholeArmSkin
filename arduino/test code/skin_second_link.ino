@@ -38,7 +38,7 @@
 #define MEASURMENT 5 // need one unused port
 
 //taxel num+1, count from 1
-#define NUM_TAXELS 9
+#define NUM_TAXELS 18
 
 int capdac = 5;
 
@@ -103,6 +103,7 @@ void loop() {
   float measurement = 0;
 
   /* MULTIPLEXER 1 */
+  tcaselect(MEASURMENT, TCAADDR4);
   
   tcaselect(0, TCAADDR1);  //scl0 sda0
   c[0] = 0; //gettaxelreading( ONEB );
@@ -123,18 +124,45 @@ void loop() {
   tcaselect(2, TCAADDR1); //scl2 sda2
   c[8] = gettaxelreading( TWOA );
 
+  /* MULTIPLEXER 2 */
   tcaselect(MEASURMENT, TCAADDR1);
   
-  uint8_t counter;
-  for(counter = 0; counter<=7; counter++)
-  {
-    Serial.print(c[counter]);
-    Serial.print(' ');
-  }
+  tcaselect(2, TCAADDR2); //scl2 sda2
+  c[17] = gettaxelreading( TWOB );
+  
+  tcaselect(5, TCAADDR2); //scl3 sda3
+  c[10] = gettaxelreading( TWOB );
+  c[9] = gettaxelreading( ONEB );
 
-  Serial.println(c[8]);
+  tcaselect(0, TCAADDR2); //scl6 sda6
+  c[16] = gettaxelreading( ONEB );
+  c[14] = gettaxelreading( TWOB );
 
+  tcaselect(6, TCAADDR2);  //scl0 sda0
+  c[11] = gettaxelreading(ONEB);
+  c[12] = 0; //gettaxelreading(TWOB);
 
+  tcaselect(4, TCAADDR2);
+  c[13] = gettaxelreading( TWOB );
+  c[15] = gettaxelreading( ONEB );
+
+  tcaselect(MEASURMENT, TCAADDR2);
+
+  tcaselect(0, TCAADDR4);
+  
+//  uint8_t counter;
+//  for(counter = 0; counter<=16; counter++)
+//  {
+//    Serial.print(c[counter]);
+//    Serial.print(' ');
+//  }
+//
+//  Serial.println(c[17]);
+
+  Serial.println(c[15]);
+  
+
+  
   msg.cdc = c;
   msg.cdc_length = NUM_TAXELS;
   msg.header.stamp = nh.now();
