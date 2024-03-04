@@ -1,4 +1,4 @@
-#!/usr/bin/env python3signal
+#!/usr/bin/env python3
 
 import rospy
 from wholearm_skin_ros.msg import TaxelData
@@ -13,8 +13,8 @@ import pickle
 import threading 
 # Declraing a lock
 lock = threading.Lock()
-taxel = 0
-filename = "0517_noshield_02"
+taxel = 36
+filename = "link3_36"
 
 # TODO: Subscribe to skin and FT data [DONE]
 # TODO: Sync skin and FT data [DONE]
@@ -28,7 +28,7 @@ class DataCollection:
     def __init__(self) -> None:
         rospy.init_node('data_collection', anonymous=True,disable_signals=True)
         s = rospy.Service('data_collection/reset_skin_bias', SetBool, self.tare_skin_data)
-        self.ft_sub = message_filters.Subscriber("/forque/forqueSensor", WrenchStamped)
+        self.ft_sub = message_filters.Subscriber("/ft_sensor/netft_data", WrenchStamped)
         self.skin_sub = message_filters.Subscriber("/skin/taxel_fast", TaxelData)
         self.sync_sub = message_filters.ApproximateTimeSynchronizer([self.ft_sub, self.skin_sub],
                                                                queue_size=10, slop=0.1)
@@ -113,3 +113,4 @@ if __name__ == "__main__":
         rospy.spin()
     finally:
         data_collector.save_data()
+
