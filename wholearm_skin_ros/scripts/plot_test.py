@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 import pickle
 import scipy.linalg
@@ -5,23 +6,34 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 import sys, getopt
+import statistics
 
-filename_shield = "Mbubble1"
-data_shield = pickle.load(open("data_collection_" + filename_shield + ".pickle", "rb"))
+filename = "link1_1"
+data = pickle.load(open("data_collection_" + filename + ".pickle", "rb"))
+skin = np.array(data['skin']) / 6000 # with pF
+origin = statistics.mean([skin[0], skin[1], skin[2], skin[3], skin[4], skin[5]])
+skin = skin - origin
+i = 0
+while i < np.size(skin):
+    if skin[i] < 0:
+        skin[i] = 0
+    i += 1
 
-skin_shield = np.array(data_shield['skin'])
+force = np.array(data['ft']) / 100  # with N
+force  = - force
+force  = force - force[0]
 
-# end_index = min(np.size(skin_shield), np.size(skin_active))
-# t = np.array(data['skin_time']) - data['skin_time'][0]
-# print(np.size(t))
+# print(skin)
+# print(force)
 
-avg_shield = np.mean(skin_shield, axis=0)
-# avg_plot = np.array([avg_reading for i in range(np.size(t))])
-# print(np.size(avg_reading))
-# std_dev = np.std(skin)
-# print(std_dev)
-end_index = np.size(skin_shield)
-plt.plot(skin_shield[0:end_index]/1000)
-# plt.plot(t, avg_plot)
-# plt.fill_between(t, avg_plot - std_dev, avg_plot + std_dev, alpha=0.5)
+# model = np.polyfit(skin, force, 3)
+# print(model[0])
+# print(model[1])
+# print(model[2])
+# end_index = np.size(skin)
+plt.plot(skin[18:])
+plt.plot(force)
+# plt.plot(skin)
+
 plt.show()
+
