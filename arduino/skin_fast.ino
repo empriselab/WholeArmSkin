@@ -92,7 +92,7 @@ void config_measure(uint8_t channel) {
 uint16_t gettaxelreading(uint8_t channel) {
   uint16_t value[2];
   time = micros();
-  while (FDC.readMeasurement(channel, value) !=0 && micros()-time < 15000)
+  while (FDC.readMeasurement(channel, value) !=0 && micros()-time < 5000)
   {
   }
   int16_t msb = (int16_t) value[0];
@@ -101,6 +101,7 @@ uint16_t gettaxelreading(uint8_t channel) {
   capacitance += ((int32_t)3028) * ((int32_t)capdac);
 //  Serial.println(micros()-time);
   return (uint16_t) capacitance*0.55;
+//  return (int16_t) value[0];
 }
 
 
@@ -129,41 +130,93 @@ void loop() {
   
   /* MULTIPLEXER 1 */
   tcaselect(MEASURMENT, TCAADDR4);
+  
+  tcaselect(0, TCAADDR1);
+  config_measure(ONEB);
+  tcaselect(3, TCAADDR1);
+  config_measure(ONEB);
+  tcaselect(1, TCAADDR1);
+  config_measure(ONEB);
+  tcaselect(4, TCAADDR1);
   config_measure(ONEB);
 
-  tcaselect(0, TCAADDR1);  //scl0 sda0
   
+  tcaselect(0, TCAADDR1);
   c[0] = gettaxelreading( ONEB );
-
   tcaselect(3, TCAADDR1);
-//  config_measure(ONEB);
   c[3] = gettaxelreading( ONEB );
-
   tcaselect(1, TCAADDR1); //scl1 sda1
-//  config_measure(ONEB);
   c[4] = gettaxelreading( ONEB );
-  
   tcaselect(4, TCAADDR1);
-//  config_measure(ONEB);
   c[7] = gettaxelreading( ONEB );
 
 
-//  /* MULTIPLEXER 2*/
-//  tcaselect(MEASURMENT, TCAADDR1); // very important, cannot be deleted!!!
-////  config_measure(ONEB);
-//
-//  tcaselect(5, TCAADDR2); //scl3 sda3
-//  c[9] = gettaxelreading( ONEB );
-//
-//  tcaselect(0, TCAADDR2); //scl6 sda6
-//  c[16] = gettaxelreading( ONEB );
-//
-//  tcaselect(6, TCAADDR2);  //scl0 sda0
-//  c[11] = gettaxelreading(ONEB);
-//
-//  tcaselect(4, TCAADDR2);
-//  c[15] = gettaxelreading( ONEB );
 
+  tcaselect(1, TCAADDR1);
+  config_measure(ONEA);
+  tcaselect(0, TCAADDR1);
+  config_measure(TWOB);
+  tcaselect(3, TCAADDR1);
+  config_measure(TWOB);
+  tcaselect(4, TCAADDR1);
+  config_measure(TWOB);
+  tcaselect(2, TCAADDR1);
+  config_measure(TWOA);
+  
+  tcaselect(1, TCAADDR1);
+  c[5] = gettaxelreading( ONEA );
+  tcaselect(0, TCAADDR1);
+  c[1] = gettaxelreading( TWOB );
+  tcaselect(3, TCAADDR1); 
+  c[2] = gettaxelreading( TWOB );
+  tcaselect(4, TCAADDR1); 
+  c[6] = gettaxelreading( TWOB );
+  tcaselect(2, TCAADDR1);
+  c[8] = gettaxelreading( TWOA );
+
+
+//  /* MULTIPLEXER 2*/
+  tcaselect(MEASURMENT, TCAADDR1); // very important, cannot be deleted!!!  
+  tcaselect(5, TCAADDR2); //scl3 sda3
+  config_measure(ONEB);
+  tcaselect(0, TCAADDR2); //scl6 sda6
+  config_measure(ONEB);
+  tcaselect(6, TCAADDR2);  //scl0 sda0
+  config_measure(ONEB);
+  tcaselect(4, TCAADDR2);
+  config_measure(ONEB);
+  
+  tcaselect(5, TCAADDR2); //scl3 sda3
+  c[9] = gettaxelreading( ONEB );
+  tcaselect(0, TCAADDR2); //scl6 sda6
+  c[16] = gettaxelreading( ONEB );
+  tcaselect(6, TCAADDR2);  //scl0 sda0
+  c[11] = gettaxelreading(ONEB);
+  tcaselect(4, TCAADDR2);
+  c[15] = gettaxelreading( ONEB );
+
+  tcaselect(2, TCAADDR2); //scl2 sda2
+  config_measure(TWOB);
+  tcaselect(5, TCAADDR2); //scl3 sda3
+  config_measure(TWOB);
+  tcaselect(0, TCAADDR2); //scl6 sda6
+  config_measure(TWOB);
+  tcaselect(6, TCAADDR2);  //scl0 sda0
+  config_measure(TWOB);
+  tcaselect(4, TCAADDR2);
+    
+  tcaselect(2, TCAADDR2); //scl2 sda2
+  c[17] = gettaxelreading( TWOB );
+  tcaselect(5, TCAADDR2); //scl3 sda3
+  c[10] = gettaxelreading( TWOB );
+  tcaselect(0, TCAADDR2); //scl6 sda6
+  c[14] = gettaxelreading( TWOB );
+  tcaselect(6, TCAADDR2);  //scl0 sda0
+  c[12] = gettaxelreading(TWOB);
+  tcaselect(4, TCAADDR2);
+  c[13] = gettaxelreading( TWOB );
+
+  
 
 //  /* MULTIPLEXER 3*/
 //  config_measure(ONEB);
@@ -183,84 +236,6 @@ void loop() {
 //
 //  tcaselect(7, TCAADDR3); //scl1 sda1
 //  c[24] = gettaxelreading( ONEB );
-
-  
-////// ONEA //////////
-  /* MULTIPLEXER 1 */
-//  tcaselect(MEASURMENT, TCAADDR4);
-//  tcaselect(1, TCAADDR1); //scl1 sda1
-//  config_measure(ONEA);
-//  c[5] = gettaxelreading( ONEA );
-
-////////// TWOA //////////
-//  /* MULTIPLEXER 2 */
-//  tcaselect(MEASURMENT, TCAADDR4);
-//  config_measure(TWOA);
-//  tcaselect(2, TCAADDR1); //scl2 sda2
-//  c[8] = 0.6 * gettaxelreading( TWOA );
-
-
-//////// TWOB //////////
-//
-  /* MULTIPLEXER 1 */
-//  tcaselect(MEASURMENT, TCAADDR4);
-//
-//  tcaselect(0, TCAADDR1);  //scl0 sda0
-//  config_measure(TWOB);
-//  c[1] = gettaxelreading( TWOB );
-//  config_measure(TWOB);
-//  tcaselect(3, TCAADDR1); //scl3 sda3
-//  config_measure(TWOB);
-//  c[2] = gettaxelreading( TWOB );
-//  config_measure(TWOB);
-//  tcaselect(4, TCAADDR1); //scl4 sda4
-//  c[6] = gettaxelreading( TWOB );
-
-  
-//
-//  /* MULTIPLEXER 2 */
-//  tcaselect(MEASURMENT, TCAADDR1); // very important, cannot be deleted!!!
-//  
-//  tcaselect(2, TCAADDR2); //scl2 sda2
-//  c[17] = gettaxelreading( TWOB );
-//
-//  tcaselect(5, TCAADDR2); //scl3 sda3
-//  c[10] = gettaxelreading( TWOB );
-//
-//  tcaselect(0, TCAADDR2); //scl6 sda6
-//  c[14] = gettaxelreading( TWOB );
-//
-//  tcaselect(6, TCAADDR2);  //scl0 sda0
-//  c[12] = gettaxelreading(TWOB);
-//
-//  tcaselect(4, TCAADDR2);
-//  c[13] = gettaxelreading( TWOB );
-  
-////////////////////////////////////
-
-
-//    /* MULTIPLEXER 2 */
-//  tcaselect(MEASURMENT, TCAADDR1); // very important, cannot be deleted!!!
-//  
-//  tcaselect(2, TCAADDR2); //scl2 sda2
-//  c[17] = gettaxelreading( TWOB );
-//  
-//  tcaselect(5, TCAADDR2); //scl3 sda3
-//  c[10] = gettaxelreading( TWOB );
-//  c[9] = gettaxelreading( ONEB );
-//
-//  tcaselect(0, TCAADDR2); //scl6 sda6
-//  c[16] = gettaxelreading( ONEB );
-//  c[14] = gettaxelreading( TWOB );
-//
-//  tcaselect(6, TCAADDR2);  //scl0 sda0
-//  c[11] = gettaxelreading(ONEB);
-//  c[12] = gettaxelreading(TWOB);
-//
-//  tcaselect(4, TCAADDR2);
-//  c[13] = gettaxelreading( TWOB );
-//  c[15] = gettaxelreading( ONEB );
-//
 //
 //
 //  /* MULTIPLEXER 3*/
@@ -336,14 +311,13 @@ void loop() {
 
   
   uint8_t counter;
-  for(counter = 0; counter<=15; counter++)
+  for(counter = 0; counter<=17; counter++)
   {
     c[counter] = 0.7 * c[counter];
     Serial.print(c[counter]);
     Serial.print(' ');
   }
   Serial.println(' ');
-//  delay(500);
 
   msg.cdc = c;
   msg.cdc_length = NUM_TAXELS;
